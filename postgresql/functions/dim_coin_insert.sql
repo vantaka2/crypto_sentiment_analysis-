@@ -16,6 +16,8 @@ v_new_cnt varchar;
 BEGIN
 
 --Create temp table of new coins to compare
+
+Execute $$ DROP TABLE if exists coin.dim_coin_compare $$; 
 Execute $$
     CREATE TABLE coin.dim_coin_compare as
             Select 
