@@ -15,7 +15,7 @@ from airflow.operators.latest_only_operator import LatestOnlyOperator
 import requests
 import psycopg2
 
-email_s = email(project_email)
+email_s = email('project_email')
 
 
 def get_coin_market_cap_data():
@@ -98,11 +98,10 @@ t2 = PostgresOperator(
 
 
 t3 = PostgresOperator(
-        task_id='insert_into_price_data',
+        task_id='insert_into_24hprice_a',
         postgres_conn_id='main_pg_db',
-        sql= """ 
-            Select * from """,
+        sql= """Select  coin.price_24h_insert();""",
         execution_timeout=timedelta(minutes=15),
-        dag=dag)
+       dag=dag)
 
 t1 >> t2 >> t3 

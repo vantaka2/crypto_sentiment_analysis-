@@ -11,7 +11,7 @@ Declare
 v_start timestamp;
 v_end timestamp;
 v_return_text varchar;
-v_new_cnt varchar;
+v_new_cnt int;
 
 BEGIN
 
@@ -34,7 +34,7 @@ $$;
 
 --Get count of new coins
 EXECUTE $$ Select count(id) 
-    FROM coin.dim_coin_compare $$ INTO v_new_cnt; 
+    FROM coin.dim_coin_compare $$ INTO v_new_cnt ; 
 
 IF v_new_cnt >= 1
     THEN 
