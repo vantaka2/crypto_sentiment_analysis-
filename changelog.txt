@@ -1,0 +1,4 @@
+v.0.0.1 1/23/18
+-Created Postgres Table to Hold pricing information 
+-Created Airflow Job to update price information every 30 minutes
+-Created Postgres functions to update dim_coin for top 600 & insert into the 24h pricing table 
