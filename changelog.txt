@@ -2,3 +2,7 @@ v.0.0.1 1/23/18
 -Created Postgres Table to Hold pricing information 
 -Created Airflow Job to update price information every 30 minutes
 -Created Postgres functions to update dim_coin for top 600 & insert into the 24h pricing table 
+v0.0.2 2/11/18
+-Created postgres tables to hold reddit data (trends/posts)
+-created airflow job to pull from reddit's api every 30 minutes
+-created python code to identify what coin is being talked about in a postgres
