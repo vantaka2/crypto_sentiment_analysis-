@@ -1,4 +1,3 @@
---Schema = 'coin'
 CREATE TABLE
     coin.dim_coin
     (
