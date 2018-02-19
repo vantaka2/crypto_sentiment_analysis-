@@ -5,7 +5,9 @@ This is a personal project to gather &amp; measure sentiment from various social
 ### Server information:
 All the tools are being run on 2 AWS servers. 
 1 m5.large & 1 t2.micro.
+
 The m5.large is running apache airflow & hosting the flask web application. 
+
 The t2.micro is running the most recent version of postgres
 
 ## Current state:
