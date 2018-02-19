@@ -14,8 +14,10 @@ The t2.micro is running the most recent version of postgres
 ## Current state:
 
 ### Tools
-Apache Airflow is being used to schedule recurring jobs to gather data from various API's. 
+Apache Airflow is being used to schedule recurring jobs to gather & manipulate data from various API's. 
+
 The data is all stored within a postgres database. 
+
 The web application is created using plotly Dash. 
 
 ### Data
