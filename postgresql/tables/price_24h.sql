@@ -8,5 +8,6 @@ CREATE TABLE
         percent_change_1h FLOAT,
         percent_change_24h FLOAT,
         percent_change_7d FLOAT,
-        24h_volume_usd FLOAT
+        24h_volume_usd FLOAT,
+        market_cap_usd FLOAT
     );

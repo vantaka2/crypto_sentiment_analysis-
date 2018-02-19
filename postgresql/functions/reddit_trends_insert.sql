@@ -17,15 +17,22 @@ BEGIN
 
 
 INSERT INTO coin.reddit_post_trends (post_id, update_time, score, num_comments)
+        
+        Select id, max(update_time) as update_time, max(score) as score, max(num_comments) as num_comments
+                
+                FROM(
         Select  id, 
-                current_timestamp,
+                current_timestamp as update_time,
                 score,
                 num_comments
-            FROM coin.stg_reddit_post            
+        FROM coin.stg_reddit_post            
+        
         union all 
+        
         select post_id, update_time,score, num_comments
-        from coin.stg_trends 
-                ;              
+                from coin.stg_trends )l
+         group by 1
+                ;             
 
 v_return_text := 'data inserted';
 

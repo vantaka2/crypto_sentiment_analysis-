@@ -6,3 +6,8 @@ v0.0.2 2/11/18
 -Created postgres tables to hold reddit data (trends/posts)
 -created airflow job to pull from reddit's api every 30 minutes
 -created python code to identify what coin is being talked about in a postgres
+v.0.0.3 2/18/18
+-Added Dash application with 4 charts: Total MC, MC by coin, Reddit post trends, Reddit posts by day. 
+-Added 4 postgres views
+-Altered coinmarketcap dag
+-Added Gif of current dashboard
