@@ -28,7 +28,7 @@ def get_coin_market_cap_data():
 def coin_dict_to_dataframe(dict_date):
     """converts json data into a dataframe & cleans up fields"""
     coin_df = pd.DataFrame(dict_date)
-    coin_df = coin_df[['id','name','symbol','price_usd','last_updated','percent_change_1h','percent_change_24h','percent_change_7d','24h_volume_usd']]
+    coin_df = coin_df[['id','name','symbol','price_usd','last_updated','percent_change_1h','percent_change_24h','percent_change_7d','24h_volume_usd','market_cap_usd']]
     coin_df = coin_df.apply(pd.to_numeric, errors='ignore')
     coin_df['last_updated'] = pd.to_datetime(coin_df['last_updated'],unit = 's')
     return coin_df
@@ -46,7 +46,8 @@ def insert_to_postgres(coin_df):
             percent_change_1h float,
             percent_change_24h float,
             percent_change_7d float,
-            volume_usd_24h float) """)
+            volume_usd_24h float,
+            market_cap_usd float) """)
     vals = [tuple(x) for x in coin_df.values]
     hook.insert_rows(
         table = 'coin.stg_coin_data',

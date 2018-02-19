@@ -18,8 +18,8 @@ BEGIN
 
 
 --Get count of new coins
-INSERT INTO coin.price_24h (id, price_usd, last_updated, percent_change_1h, percent_change_24h, percent_change_7d, volume_usd_24h)
-Select id, price_usd, last_update, percent_change_1h, percent_change_24h, percent_change_7d, volume_usd_24h
+INSERT INTO coin.price_24h (id, price_usd, last_updated, percent_change_1h, percent_change_24h, percent_change_7d, volume_usd_24h,market_cap_usd,insert_timestamp)
+Select id, price_usd, last_update, percent_change_1h, percent_change_24h, percent_change_7d, volume_usd_24h,market_cap_usd, now() at time zone 'utc'
     FROM coin.stg_coin_data
 ;
 
