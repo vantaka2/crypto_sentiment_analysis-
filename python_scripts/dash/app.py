@@ -18,7 +18,7 @@ app = dash.Dash()
 app.css.append_css(
     {'external_url':'https://cdn.rawgit.com/plotly/dash-app-stylesheets/2d266c578d2a6e8850ebce48fdb52759b2aef506/stylesheet-oil-and-gas.css'})
 
-## has the sql connection information (from 'secrets')
+##has the sql connection information (from 'secrets')
 sql_con = sql_conn('postgres')
 ## get market cap data frame
 def market_cap_df(pg_conn=sql_con):
@@ -26,6 +26,7 @@ def market_cap_df(pg_conn=sql_con):
     sql = """
     select id, name, current_rank, last_updated,insert_timestamp, market_cap_usd
     From coin.mc_graph_data 
+    group by 1,2,3,4,5,6
         """
     df = pd.read_sql(sql, pg_conn)
     return df
@@ -161,7 +162,7 @@ app.layout = html.Div([
 def set_coin_select(qf_value):
     print(qf_value)
     if qf_value == None:
-        value = ['ChainLink', 'SmartCash', 'Enigma']
+        value = ['Nano', 'VeChain', 'Enigma']
     else:
         value = df_mc[df_mc['current_rank'] <= qf_value]['name'].unique()
     print(value)
@@ -187,6 +188,7 @@ def update_total_mc(coin_select, date_filter):
     print("Coin_select: {}".format(coin_select))
     print("date_filter: {}".format(date_filter))
     df_total_mc = filter_df(df_mc, coin_select, date_filter)
+    print(df_total_mc.head())
     data = [{
         'x':df_total_mc.groupby('insert_timestamp', as_index=False).agg('sum').sort_values('insert_timestamp')['insert_timestamp'],
         'y':df_total_mc.groupby('insert_timestamp', as_index=False).agg('sum').sort_values('insert_timestamp')['market_cap_usd'],
@@ -202,11 +204,12 @@ def update_total_mc(coin_select, date_filter):
     [dash.dependencies.Input('coin_select', 'value'),
     dash.dependencies.Input('date_filter', 'value')])
 def update_mc_by_coin(coin_select, date_filter):
-    df_coin_mc = filter_df(df_mc, coin_select, date_filter)
+    df_coin_mc_stg = filter_df(df_mc, coin_select, date_filter)
+    df_coin_mc = df_coin_mc_stg.sort_values(by=['id','insert_timestamp'])
     data = [
         go.Scatter(
             x=df_coin_mc[df_coin_mc['name'] == i]['last_updated'],
-            y=df_coin_mc[df_coin_mc['name'] == i]['market_cap_usd'],
+            y=df_coin_mc[df_coin_mc['name'] == i]['pct_change'],
             mode='line',
             opacity=0.8,
             name=i
@@ -215,8 +218,9 @@ def update_mc_by_coin(coin_select, date_filter):
     layout = go.Layout(
         title='Coin Level Market Cap',
         yaxis=dict(
-            title='USD'
-        )
+            title='Percent Change'    
+        ),
+        hovermode='closest'
     )
     figure = {'data':data,
     'layout':layout}
@@ -283,7 +287,23 @@ def filter_df(df=None, coin_select=None, date_filter=None):
     df_stg = df[df['name'].isin(coin_select)]
     #date_filter
     df_stg_2 = df_stg[df_stg['insert_timestamp'] >= date_cutoff]
-    return df_stg_2
+    coin_list = list(df_stg_2['name'].unique())
+    frame = []
+    for i in coin_list:
+        df_stg_3 = df_stg_2[df_stg_2['name']== i]
+        base = df_stg_3[df_stg_3['insert_timestamp'] == df_stg_3.min()['insert_timestamp']]['market_cap_usd'].reset_index(drop=True)[0]
+        print(base)
+        df_stg_3['pct_change'] = (((df_stg_3['market_cap_usd']-base)/ base) * 100 )
+        frame.append(df_stg_3)
+    df_stg_4 = pd.concat(frame)
+    return df_stg_4
+#base2 = df2[df2['insert_timestamp'] == df2.min()['insert_timestamp']]['market_cap_usd']
+# frames = []
+# for i in coin_list:
+#     df3 = df[df['id']== i]
+#     base = df3.min()['market_cap_usd']
+#     df3['pct_chang']=( ( (df3['market_cap_usd'] - base ) / base ) * 100 )
+#     frames.append(df3)
 
 def filter_reddit(df=None, coin_select=None, date_filter=None):
     df_stg = df[df['name'].isin(coin_select)]
