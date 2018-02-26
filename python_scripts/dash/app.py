@@ -258,7 +258,7 @@ def update_reddit_trends(coin_select, date_filter):
     df_trends = df_2.sort_values(['diff']).reset_index(drop=True)
     posts = list(df_trends['post_id'].unique())
     data2 = [
-        go.Scatter(
+        go.Scatter( 
             x=df_trends[df_trends['post_id'] == i]['diff'],
             y=df_trends[df_trends['post_id'] == i]['score'],
             mode='line',
