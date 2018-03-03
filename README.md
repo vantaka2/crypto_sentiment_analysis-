@@ -7,7 +7,7 @@ All the tools are being run on 2 AWS servers.
 
 1 m5.large & 1 t2.micro.
 
-The m5.large is running apache airflow & hosting the flask web application. 
+The m5.large is running apache airflow & is doing the data proessing.  
 
 The t2.micro is running the most recent version of postgres
 
@@ -27,7 +27,9 @@ Reddit Post - post's from /r/cryptocurrency.
 
 
 ### Dashboard
-Currently the web application is not hosted for the public but will be once its a bit cleaner & has more information within it!. 
+Currently the web application is hosted on Heroku on the free teir, You can acess it at: http://crypto-sentiment-keerthan.herokuapp.com/
+
+And the code behind the frontend application can be found at: https://github.com/vantaka2/crypto_dash_app
 
 The current state of the web application can be seen in the gif below. 
 
@@ -53,6 +55,3 @@ coin specific subreddits
 Add new view for a in-dept analysis of a coin. 
 
 Add ability to input coin holdings & graph portfolio 
-
-Host web app on amazon. 
-
