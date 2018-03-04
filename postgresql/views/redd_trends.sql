@@ -1,4 +1,4 @@
-#Clean this up.... 
+
 create or replace view coin.reddit_trends as
 Select a.post_id,b.created,b.title,e.name, EXTRACT('epoch' FROM (a.update_time - b.created)):: int / 60 as diff , max(a.score) as score, max(a.num_comments) as num_comments from coin.reddit_post_trends a
 inner join coin.dim_Reddit_post b
