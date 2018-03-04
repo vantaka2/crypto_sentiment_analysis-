@@ -1,57 +1,96 @@
-# crypto sentiment analysis
+# crypto sentiment analysis 
 
-This is a personal project to gather &amp; measure sentiment from various social media / news sites and compare that to the price fluctuations of crypto currencies.
+Welcome! 
 
-### Server information:
-All the tools are being run on 2 AWS servers. 
+This is a project to measure and analyze how various social media / news sites correspond with market fluctuations for crypto currency.
 
-1 m5.large & 1 t2.micro.
+The main purpose of this project is:
 
-The m5.large is running apache airflow & is doing the data proessing.  
+1) Create a useful application for those interested in cryptocurrency
 
-The t2.micro is running the most recent version of postgres
+2) Get hands on expiernce with various tools/technology I'm interested in.
 
-## Current state:
+I've broken up the project into two repositories, one holds the frontend code for the web applicaiton, the other holds the backend code. 
 
-### Tools
-Apache Airflow is being used to schedule recurring jobs to gather & manipulate data from various API's. 
+Frontend: https://github.com/vantaka2/crypto_sentiment_analysis-
 
-The data is all stored within a postgres database. 
+Backend: https://github.com/vantaka2/crypto_dash_app
 
-The web application is created using plotly Dash. 
+Here is a link to the current state of the web app: 
+https://crypto-sentiment-keerthan.herokuapp.com/ 
 
-### Data
-Coinmarketcap API -  https://coinmarketcap.com/api/
+(Please keep in mind this is running on heroku's free teir. In Heroku's free teir applications are put to sleep if no one uses it for 30 minutes, so the first person to check it out after its put to sleep will have a to wait a mintue or two for the app to start up again.)
 
-Reddit Post - post's from /r/cryptocurrency. 
+##Frontend
 
+### Framework
 
-### Dashboard
-Currently the web application is hosted on Heroku on the free teir, You can acess it at: http://crypto-sentiment-keerthan.herokuapp.com/
+I've chosen to create the frontend using Plotly Dash. Plotly Dash is a python framework for building analytical web applications without javascript. 
 
-And the code behind the frontend application can be found at: https://github.com/vantaka2/crypto_dash_app
+Check out the project here: 
 
-The current state of the web application can be seen in the gif below. 
+https://github.com/plotly/dash/
 
-![Alt Text](https://github.com/vantaka2/crypto_sentiment_analysis-/blob/develop/gif_1.gif)
+https://plot.ly/products/dash/
 
-## future:
+### Hosting
 
-### Tools
-Kafka w/ Kafka streams for real time twitter data. 
+The application is currently being hosted on Heroku. For the time being I am using the free teir until the application is in a better state or there is increased interest in it. Some options moving forward are to move it to Heroku's Standard plan or have it run on the AWS server that i'm already paying for to do the backend work.  
 
-### data
-Gather News article data - https://newsapi.org/
+You can find the application here: 
+https://crypto-sentiment-keerthan.herokuapp.com/ 
 
-Twitter data - twitter API
+### Design: 
 
-Facebook data
+I am not a UI/UX person, if you have feedback on how the design of the application can be improved please let me know via github issues!
 
-Instagram Data
+For now I've chosen the color scheme after a quick google on what color combinations to use for dashboards. 
 
-coin specific subreddits 
+Source: https://aesalazar.com/blog/3-professional-color-combinations-for-dashboards-or-mobile-bi-applications/
 
-### Dashboard
-Add new view for a in-dept analysis of a coin. 
+HEX color codes used: #F1F1F1, #202020, #7E909A, #1C4E80, #A5D8DD, #EA6A47, #0091D5
 
-Add ability to input coin holdings & graph portfolio 
+##Backend
+
+###Server 
+
+The backend proceses are running on 2 AWS servers. 
+
+1 m5.large & 1 t2.micro. 
+
+The m5.large is running apache airflow and is preforming the ETL processing from various data sources. 
+
+The t2.micro is hosting a postgres database
+
+### Tools/Tech
+
+#### Apache Airflow
+
+Airflow is a platform to programmatically author, schedule, and monitor workflows. 
+
+Check out airflow at : https://github.com/apache/incubator-airflow
+
+#### PostgreSQL
+
+I'm using PostgreSQL as my database. 
+
+Version: postgreSQL 9.5.3 
+
+https://www.postgresql.org/
+
+### DATA
+
+#### Coinmarketcap
+
+I'm using the coinmarketcap API to obtain data on the current price & market cap of all the coins. They have a awesome API, check it out! 
+
+https://coinmarketcap.com/api/
+
+#### reddit
+
+I'm using the praw library to access the reddit API. 
+
+Check out Praw here: https://github.com/praw-dev/praw
+
+Info on reddit's API: https://www.reddit.com/dev/api/
+
