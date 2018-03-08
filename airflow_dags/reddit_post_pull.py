@@ -204,7 +204,7 @@ t8 = PythonOperator(
     )
 
 t9 = PostgresOperator(
-        task_id='insert_coin_to_post',
+        task_id='insert_to_sentiment',
         postgres_conn_id='main_pg_db',
         sql="""insert into coin.sentiment
                 (source, source_category, source_id, sentiment, confidence) 
