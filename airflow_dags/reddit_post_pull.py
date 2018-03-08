@@ -3,6 +3,7 @@ import sys
 sys.path.append("/usr/local/lib/python2.7/site-packages")
 from secrets import * 
 from reddit_kv import get_reddit_dict,get_reddit_trends_dict,assign_coin_to_posts
+from sentiment_analysis import get_sentiment
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
@@ -15,6 +16,7 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
 import requests
 import psycopg2
+
 
 email = email('project_email')
 
@@ -48,6 +50,30 @@ def get_trends_df(list_id):
     trends_df = pd.DataFrame(red_trend_dict)
     trends_df['update_time'] = datetime.now()
     return trends_df
+
+def assign_sentiment():
+    hook = PostgresHook(postgres_conn_id = 'main_pg_db')
+    hook.run(" drop table if exists coin.sentiment_stg")
+    hook.run(""" Create table coin.sentiment_stg 
+    (confidence float,
+    post_id text,
+    sentiment text,
+    subreddit text,
+    title text)"""
+    data = hook.get_records()
+    fields = ['post_id','subreddit','title']
+    dicts = [dict(zip(fields, d)) for d in data]
+    for i in dicts:
+        sentiment = get_sentiment(i['title'])
+        i.update(sentiment)
+    df1 = pd.DataFrame(dicts)
+    vals = df1.values
+    hook.insert_rows(
+            table = 'coin.sentiment_stg',
+            rows = vals,
+            commit_every = 0
+        )
+
 
 def trends_stg_tbl(df):
     hook = PostgresHook(postgres_conn_id = 'main_pg_db')
@@ -170,5 +196,28 @@ t7 = PostgresOperator(
         retry_exponential_backoff=True,
         dag=dag)
 
+t8 = PythonOperator(
+    task_id='assign_sentiment',
+    python_callable=assign_sentiment,
+    dag=dag,
+    execution_timeout=timedelta(minutes=15)
+    )
+
+t9 = PostgresOperator(
+        task_id='insert_coin_to_post',
+        postgres_conn_id='main_pg_db',
+        sql="""insert into coin.sentiment
+                (source, source_category, source_id, sentiment, confidence) 
+                Select 'reddit' as source, subreddit, post_id,  sentiment, confidence 
+                from coin.sentiment_stg a
+                left join coin.sentiment b
+                on a.post_id = b.source_id
+                where b.source_id is null; 
+                """,
+        execution_timeout=timedelta(minutes=15),
+        retry_exponential_backoff=True,
+        dag=dag)
+
 t1 >> t2 >> t6 >> t7 >> t5
 t1 >> t3 >> t4 >> t5
+t1 >> t8 >> t9 >> t5
