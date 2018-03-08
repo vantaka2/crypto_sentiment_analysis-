@@ -59,7 +59,7 @@ def assign_sentiment():
     post_id text,
     sentiment text,
     subreddit text,
-    title text)"""
+    title text)""")
     data = hook.get_records()
     fields = ['post_id','subreddit','title']
     dicts = [dict(zip(fields, d)) for d in data]
