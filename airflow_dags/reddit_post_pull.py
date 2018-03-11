@@ -60,7 +60,11 @@ def assign_sentiment():
     sentiment text,
     subreddit text,
     title text)""")
-    data = hook.get_records()
+    sql = """Select a.id as post_id, a.subreddit, a.title from coin.stg_reddit_post a
+        left join coin.sentiment b
+        on a.id = b.source_id
+        where b.source_id is null limit 100 """
+    data = hook.get_records(sql)
     fields = ['post_id','subreddit','title']
     dicts = [dict(zip(fields, d)) for d in data]
     for i in dicts:
@@ -91,8 +95,7 @@ def trends_stg_tbl(df):
     hook.insert_rows(
             table = 'coin.stg_trends',
             rows = val_trends,
-            commit_every = 0
-        )
+            commit_every = 0)
 
 def insert_stg_tbl(df):
     """create temp table in postgres of coin data"""
@@ -107,7 +110,7 @@ def insert_stg_tbl(df):
             selftext varchar,
             subreddit varchar,
             title varchar
-            ) """)
+            )""")
     vals = [tuple(x) for x in df.values]
     hook.insert_rows(
         table = 'coin.stg_reddit_post',
@@ -188,8 +191,8 @@ t7 = PostgresOperator(
         task_id='insert_coin_to_post',
         postgres_conn_id='main_pg_db',
         sql="""insert into coin.xref_post_to_coin
-                (post_id, coin_id, keyword,match_type) 
-                Select reddit_id as post_id,  coin_id, array_agg(keyword), match_type from 
+                (post_id, coin_id, keyword, match_type) 
+                Select reddit_id as post_id,  coin_id, array_agg(keyword), match_type::int from 
                 coin.stg_xref_post_to_coin
                 group by 1,2,4;""",
         execution_timeout=timedelta(minutes=15),
@@ -204,11 +207,11 @@ t8 = PythonOperator(
     )
 
 t9 = PostgresOperator(
-        task_id='insert_coin_to_post',
+        task_id='insert_to_sentiment',
         postgres_conn_id='main_pg_db',
         sql="""insert into coin.sentiment
                 (source, source_category, source_id, sentiment, confidence) 
-                Select 'reddit' as source, subreddit, post_id,  sentiment, confidence 
+                Select 'reddit' as source, subreddit, post_id,  a.sentiment, a.confidence 
                 from coin.sentiment_stg a
                 left join coin.sentiment b
                 on a.post_id = b.source_id
